@@ -20,7 +20,8 @@
 
   function getExpandedSize(wrapper) {
     var rect = wrapper.getBoundingClientRect();
-    var overscan = 8;
+    var overscan = window.matchMedia &&
+      window.matchMedia("(max-width: 767px)").matches ? 16 : 8;
 
     return {
       width: Math.max(1, Math.ceil(rect.width) + overscan),
@@ -127,8 +128,6 @@
     var duration = toPositiveNumber(config.duration, 2, 0.1);
     var stagger = toPositiveNumber(config.stagger, 0.08, 0);
     var imageDuration = toPositiveNumber(config.imageDuration, 6, 0.1);
-    var expandedSize = getExpandedSize(wrapper);
-
     var timeline = window.gsap.timeline({
       defaults: { ease: "expo.inOut" },
       paused: true,
@@ -205,8 +204,12 @@
     timeline.to(
       growingImage,
       {
-        width: expandedSize.width,
-        height: expandedSize.height,
+        width: function () {
+          return getExpandedSize(wrapper).width;
+        },
+        height: function () {
+          return getExpandedSize(wrapper).height;
+        },
         duration: imageDuration,
         ease: "expo.inOut"
       },
@@ -216,8 +219,12 @@
     timeline.to(
       box,
       {
-        width: Math.ceil(expandedSize.width * 1.1),
-        height: expandedSize.height,
+        width: function () {
+          return Math.ceil(getExpandedSize(wrapper).width * 1.1);
+        },
+        height: function () {
+          return getExpandedSize(wrapper).height;
+        },
         duration: imageDuration
       },
       "<"

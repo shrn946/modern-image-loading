@@ -294,11 +294,12 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 				'range'      => array(
 					'px' => array( 'min' => 24, 'max' => 300 ),
 					'em' => array( 'min' => 2, 'max' => 20, 'step' => 0.1 ),
+					'rem' => array( 'min' => 2, 'max' => 20, 'step' => 0.1 ),
 					'vw' => array( 'min' => 5, 'max' => 30, 'step' => 0.1 ),
 				),
 				'default'    => array( 'unit' => 'em', 'size' => 12.5 ),
 				'tablet_default' => array( 'unit' => 'em', 'size' => 9 ),
-				'mobile_default' => array( 'unit' => 'em', 'size' => 5.5 ),
+				'mobile_default' => array( 'unit' => 'rem', 'size' => 4.75 ),
 				'selectors'  => array( '{{WRAPPER}}' => '--esl-heading-font-size: {{SIZE}}{{UNIT}};' ),
 			)
 		);
@@ -315,7 +316,9 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 					'dvh' => array( 'min' => 40, 'max' => 120 ),
 				),
 				'default'    => array( 'unit' => 'dvh', 'size' => 100 ),
-				'selectors'  => array( '{{WRAPPER}} .esl-showup-header, {{WRAPPER}} .esl-showup-header__content' => 'min-height: {{SIZE}}{{UNIT}};' ),
+				'tablet_default' => array( 'unit' => 'dvh', 'size' => 100 ),
+				'mobile_default' => array( 'unit' => 'dvh', 'size' => 100 ),
+				'selectors'  => array( '{{WRAPPER}}' => '--esl-section-height: {{SIZE}}{{UNIT}};' ),
 			)
 		);
 
@@ -438,8 +441,6 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 		$start_chars = array_slice( $loading_chars, 0, $split_at );
 		$end_chars = array_slice( $loading_chars, $split_at );
 		$final_chars = $this->split_characters( $settings['final_title'] );
-		$longest_text_length = max( 1, count( $loading_chars ), count( $final_chars ) );
-		$fit_font_size = min( 20, max( 2, 90 / $longest_text_length ) );
 		$images = ! empty( $settings['animation_images'] ) ? $settings['animation_images'] : array();
 		$main_image = array_pop( $images );
 		$wrapper_id = 'esl-showup-' . $this->get_id();
@@ -460,7 +461,6 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 			id="<?php echo esc_attr( $wrapper_id ); ?>"
 			class="esl-showup-header esl-final-position--<?php echo esc_attr( $final_text_position ); ?> is--hidden<?php echo $animation_enabled ? ' is--loading' : ' is-animation-disabled'; ?>"
 			data-esl-config="<?php echo esc_attr( wp_json_encode( $config ) ); ?>"
-			style="--esl-fit-font-size-vw: <?php echo esc_attr( $fit_font_size ); ?>vw; --esl-fit-font-size-cqw: <?php echo esc_attr( $fit_font_size ); ?>cqw;"
 		>
 			<div class="esl-showup-loader" aria-hidden="true">
 				<div class="esl-showup__h1">
