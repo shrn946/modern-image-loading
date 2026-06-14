@@ -22,7 +22,7 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Showup Loader', 'elementor-willem-loader' );
+		return esc_html__( 'Showup Loader', 'elementor-showup-loader' );
 	}
 
 	public function get_icon() {
@@ -56,7 +56,7 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 		$this->start_controls_section(
 			'content_section',
 			array(
-				'label' => esc_html__( 'Content', 'elementor-willem-loader' ),
+				'label' => esc_html__( 'Content', 'elementor-showup-loader' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
@@ -64,9 +64,9 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 		$this->add_control(
 			'loading_text',
 			array(
-				'label'       => esc_html__( 'Main Loading Text', 'elementor-willem-loader' ),
+				'label'       => esc_html__( 'Main Loading Text', 'elementor-showup-loader' ),
 				'type'        => Controls_Manager::TEXT,
-				'default'     => esc_html__( 'Showup', 'elementor-willem-loader' ),
+				'default'     => esc_html__( 'Showup', 'elementor-showup-loader' ),
 				'label_block' => true,
 			)
 		);
@@ -74,9 +74,9 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 		$this->add_control(
 			'final_title',
 			array(
-				'label'       => esc_html__( 'Final Text', 'elementor-willem-loader' ),
+				'label'       => esc_html__( 'Final Text', 'elementor-showup-loader' ),
 				'type'        => Controls_Manager::TEXT,
-				'default'     => esc_html__( 'Showup', 'elementor-willem-loader' ),
+				'default'     => esc_html__( 'Showup', 'elementor-showup-loader' ),
 				'label_block' => true,
 			)
 		);
@@ -90,7 +90,7 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 		$this->start_controls_section(
 			'image_section',
 			array(
-				'label' => esc_html__( 'Animation Images', 'elementor-willem-loader' ),
+				'label' => esc_html__( 'Animation Images', 'elementor-showup-loader' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
@@ -99,16 +99,16 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 		$image_repeater->add_control(
 			'image_label',
 			array(
-				'label'       => esc_html__( 'Image Label', 'elementor-willem-loader' ),
+				'label'       => esc_html__( 'Image Label', 'elementor-showup-loader' ),
 				'type'        => Controls_Manager::TEXT,
-				'default'     => esc_html__( 'Image', 'elementor-willem-loader' ),
+				'default'     => esc_html__( 'Image', 'elementor-showup-loader' ),
 				'label_block' => true,
 			)
 		);
 		$image_repeater->add_control(
 			'image',
 			array(
-				'label'   => esc_html__( 'Image', 'elementor-willem-loader' ),
+				'label'   => esc_html__( 'Image', 'elementor-showup-loader' ),
 				'type'    => Controls_Manager::MEDIA,
 				'default' => array(
 					'url' => $placeholder_image,
@@ -118,7 +118,7 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 		$image_repeater->add_control(
 			'alt_text',
 			array(
-				'label'       => esc_html__( 'Alt Text', 'elementor-willem-loader' ),
+				'label'       => esc_html__( 'Alt Text', 'elementor-showup-loader' ),
 				'type'        => Controls_Manager::TEXT,
 				'default'     => '',
 				'label_block' => true,
@@ -128,26 +128,26 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 		$this->add_control(
 			'animation_images',
 			array(
-				'label'       => esc_html__( 'Images', 'elementor-willem-loader' ),
-				'description' => esc_html__( 'Images play in order. The last image remains visible when the effect finishes.', 'elementor-willem-loader' ),
+				'label'       => esc_html__( 'Images', 'elementor-showup-loader' ),
+				'description' => esc_html__( 'Images play in order. The last image remains visible when the effect finishes.', 'elementor-showup-loader' ),
 				'type'        => Controls_Manager::REPEATER,
 				'fields'      => $image_repeater->get_controls(),
 				'title_field' => '{{{ image_label || "Image" }}}',
 				'default'     => array(
 					array(
-						'image_label' => esc_html__( 'Image 1', 'elementor-willem-loader' ),
+						'image_label' => esc_html__( 'Image 1', 'elementor-showup-loader' ),
 						'image'       => array( 'url' => $placeholder_image ),
 					),
 					array(
-						'image_label' => esc_html__( 'Image 2', 'elementor-willem-loader' ),
+						'image_label' => esc_html__( 'Image 2', 'elementor-showup-loader' ),
 						'image'       => array( 'url' => $placeholder_image ),
 					),
 					array(
-						'image_label' => esc_html__( 'Image 3', 'elementor-willem-loader' ),
+						'image_label' => esc_html__( 'Image 3', 'elementor-showup-loader' ),
 						'image'       => array( 'url' => $placeholder_image ),
 					),
 					array(
-						'image_label' => esc_html__( 'Image 4', 'elementor-willem-loader' ),
+						'image_label' => esc_html__( 'Image 4', 'elementor-showup-loader' ),
 						'image'       => array( 'url' => $placeholder_image ),
 					),
 				),
@@ -281,6 +281,7 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 				'name'     => 'heading_typography',
 				'label'    => esc_html__( 'Heading Typography', 'elementor-willem-loader' ),
 				'selector' => '{{WRAPPER}} .esl-showup__h1',
+				'exclude'  => array( 'font_size' ),
 			)
 		);
 
@@ -298,7 +299,7 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 				'default'    => array( 'unit' => 'em', 'size' => 12.5 ),
 				'tablet_default' => array( 'unit' => 'em', 'size' => 9 ),
 				'mobile_default' => array( 'unit' => 'em', 'size' => 5.5 ),
-				'selectors'  => array( '{{WRAPPER}} .esl-showup__h1' => 'font-size: {{SIZE}}{{UNIT}};' ),
+				'selectors'  => array( '{{WRAPPER}}' => '--esl-heading-font-size: {{SIZE}}{{UNIT}};' ),
 			)
 		);
 
@@ -437,6 +438,8 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 		$start_chars = array_slice( $loading_chars, 0, $split_at );
 		$end_chars = array_slice( $loading_chars, $split_at );
 		$final_chars = $this->split_characters( $settings['final_title'] );
+		$longest_text_length = max( 1, count( $loading_chars ), count( $final_chars ) );
+		$fit_font_size = min( 20, max( 2, 90 / $longest_text_length ) );
 		$images = ! empty( $settings['animation_images'] ) ? $settings['animation_images'] : array();
 		$main_image = array_pop( $images );
 		$wrapper_id = 'esl-showup-' . $this->get_id();
@@ -457,6 +460,7 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 			id="<?php echo esc_attr( $wrapper_id ); ?>"
 			class="esl-showup-header esl-final-position--<?php echo esc_attr( $final_text_position ); ?> is--hidden<?php echo $animation_enabled ? ' is--loading' : ' is-animation-disabled'; ?>"
 			data-esl-config="<?php echo esc_attr( wp_json_encode( $config ) ); ?>"
+			style="--esl-fit-font-size-vw: <?php echo esc_attr( $fit_font_size ); ?>vw; --esl-fit-font-size-cqw: <?php echo esc_attr( $fit_font_size ); ?>cqw;"
 		>
 			<div class="esl-showup-loader" aria-hidden="true">
 				<div class="esl-showup__h1">

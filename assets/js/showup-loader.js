@@ -3,6 +3,12 @@
 
   var initialized = new WeakSet();
   var timelines = new WeakMap();
+  var resizeObservers = new WeakMap();
+
+  function toPositiveNumber(value, fallback, minimum) {
+    var parsed = Number(value);
+    return Number.isFinite(parsed) ? Math.max(minimum, parsed) : fallback;
+  }
 
   function parseConfig(wrapper) {
     try {
@@ -12,6 +18,48 @@
     }
   }
 
+  function getExpandedSize(wrapper) {
+    var rect = wrapper.getBoundingClientRect();
+    var overscan = 8;
+
+    return {
+      width: Math.max(1, Math.ceil(rect.width) + overscan),
+      height: Math.max(1, Math.ceil(rect.height) + overscan)
+    };
+  }
+
+  function setExpandedState(wrapper, box, growingImage) {
+    var size = getExpandedSize(wrapper);
+
+    window.gsap.set(box, {
+      width: Math.ceil(size.width * 1.1),
+      height: size.height
+    });
+    window.gsap.set(growingImage, {
+      width: size.width,
+      height: size.height
+    });
+  }
+
+  function observeCompletedSize(wrapper, box, growingImage) {
+    if (!window.ResizeObserver || resizeObservers.has(wrapper)) {
+      return;
+    }
+
+    var observer = new ResizeObserver(function () {
+      if (
+        window.gsap &&
+        (wrapper.classList.contains("is--complete") ||
+          wrapper.classList.contains("is-animation-disabled"))
+      ) {
+        setExpandedState(wrapper, box, growingImage);
+      }
+    });
+
+    observer.observe(wrapper);
+    resizeObservers.set(wrapper, observer);
+  }
+
   function showCompletedState(wrapper) {
     var box = wrapper.querySelectorAll(".esl-showup-loader__box");
     var growingImage = wrapper.querySelectorAll(".esl-showup__growing-image");
@@ -19,12 +67,12 @@
     var replayButton = wrapper.querySelector(".esl-showup-replay");
 
     wrapper.classList.remove("is--hidden", "is--loading");
-    wrapper.classList.add("is-animation-disabled");
+    wrapper.classList.add("is-animation-disabled", "is--complete");
 
     if (window.gsap) {
-      window.gsap.set(box, { width: "110vw" });
-      window.gsap.set(growingImage, { width: "100vw", height: "100dvh" });
+      setExpandedState(wrapper, box, growingImage);
       window.gsap.set(extras, { opacity: 0 });
+      observeCompletedSize(wrapper, box, growingImage);
     }
 
     if (replayButton) {
@@ -32,14 +80,34 @@
     }
   }
 
-  function initShowupLoader(wrapper) {
-    if (!wrapper || initialized.has(wrapper)) {
+  function waitForImages(wrapper) {
+    var images = Array.prototype.slice.call(wrapper.querySelectorAll("img"));
+    var pending = images.filter(function (image) {
+      return !image.complete;
+    });
+
+    if (!pending.length) {
+      return Promise.resolve();
+    }
+
+    return Promise.race([
+      Promise.all(pending.map(function (image) {
+        return new Promise(function (resolve) {
+          image.addEventListener("load", resolve, { once: true });
+          image.addEventListener("error", resolve, { once: true });
+        });
+      })),
+      new Promise(function (resolve) {
+        window.setTimeout(resolve, 2500);
+      })
+    ]);
+  }
+
+  function createTimeline(wrapper, config) {
+    if (!wrapper.isConnected) {
       return;
     }
 
-    initialized.add(wrapper);
-
-    var config = parseConfig(wrapper);
     var reducedMotion = window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -56,21 +124,28 @@
     var coverImageExtras = wrapper.querySelectorAll(".esl-showup__cover-image-extra");
     var finalLetters = wrapper.querySelectorAll(".esl-showup__letter-white");
     var replayButton = wrapper.querySelector(".esl-showup-replay");
-    var duration = Number(config.duration) || 2;
-    var stagger = Math.max(0, Number(config.stagger) || 0);
-    var imageDuration = Number(config.imageDuration) || 6;
+    var duration = toPositiveNumber(config.duration, 2, 0.1);
+    var stagger = toPositiveNumber(config.stagger, 0.08, 0);
+    var imageDuration = toPositiveNumber(config.imageDuration, 6, 0.1);
+    var expandedSize = getExpandedSize(wrapper);
 
     var timeline = window.gsap.timeline({
       defaults: { ease: "expo.inOut" },
+      paused: true,
       onStart: function () {
-        wrapper.classList.remove("is--hidden");
+        wrapper.classList.remove("is--hidden", "is--complete", "is-animation-disabled");
         wrapper.classList.add("is--loading");
+        window.gsap.set(box, { height: "1em" });
+        window.gsap.set(growingImage, { height: "100%" });
+        window.gsap.set(coverImageExtras, { opacity: 1 });
         if (replayButton) {
           replayButton.classList.remove("is-visible");
         }
       },
       onComplete: function () {
         wrapper.classList.remove("is--loading");
+        wrapper.classList.add("is--complete");
+        setExpandedState(wrapper, box, growingImage);
         if (replayButton) {
           replayButton.classList.add("is-visible");
         }
@@ -89,7 +164,7 @@
       box,
       { width: "0em" },
       { width: "1em", duration: duration },
-      "< " + duration
+      "<"
     );
 
     timeline.fromTo(
@@ -114,8 +189,6 @@
     );
 
     if (coverImageExtras.length) {
-      window.gsap.set(coverImageExtras, { opacity: 1 });
-
       coverImageExtras.forEach(function (image, index) {
         timeline.to(
           image,
@@ -132,15 +205,23 @@
     timeline.to(
       growingImage,
       {
-        width: "100vw",
-        height: "100dvh",
+        width: expandedSize.width,
+        height: expandedSize.height,
         duration: imageDuration,
         ease: "expo.inOut"
       },
       ">+=0.2"
     );
 
-    timeline.to(box, { width: "110vw", duration: imageDuration }, "<");
+    timeline.to(
+      box,
+      {
+        width: Math.ceil(expandedSize.width * 1.1),
+        height: expandedSize.height,
+        duration: imageDuration
+      },
+      "<"
+    );
 
     timeline.from(
       finalLetters,
@@ -157,10 +238,37 @@
       replayButton.addEventListener("click", function () {
         var currentTimeline = timelines.get(wrapper);
         if (currentTimeline) {
-          currentTimeline.restart();
+          wrapper.classList.remove("is--complete");
+          currentTimeline.restart(true);
         }
       });
     }
+
+    observeCompletedSize(wrapper, box, growingImage);
+    timeline.play(0);
+  }
+
+  function initShowupLoader(wrapper) {
+    if (!wrapper || initialized.has(wrapper)) {
+      return;
+    }
+
+    initialized.add(wrapper);
+
+    var config = parseConfig(wrapper);
+    var reducedMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (config.enabled === false || reducedMotion || !window.gsap) {
+      showCompletedState(wrapper);
+      return;
+    }
+
+    waitForImages(wrapper).then(function () {
+      createTimeline(wrapper, config);
+    }).catch(function () {
+      showCompletedState(wrapper);
+    });
   }
 
   function initWithin(scope) {

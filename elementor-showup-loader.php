@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Elementor Showup Loader Widget
  * Description: Adds a configurable Showup loading animation widget to Elementor.
- * Version: 1.1.0
+ * Version: 1.1.4
  * Author: Hassan
  * Text Domain: elementor-showup-loader
  * Requires Plugins: elementor
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ESL_VERSION', '1.1.0' );
+define( 'ESL_VERSION', '1.1.4' );
 define( 'ESL_FILE', __FILE__ );
 define( 'ESL_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ESL_URL', plugin_dir_url( __FILE__ ) );
