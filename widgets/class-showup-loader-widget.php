@@ -171,7 +171,7 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 			array(
 				'label'     => esc_html__( 'Background Color', 'elementor-willem-loader' ),
 				'type'      => Controls_Manager::COLOR,
-				'default'   => '#f4f4f4',
+				'default'   => '#E8E8A2',
 				'selectors' => array( '{{WRAPPER}} .esl-showup-header' => 'background-color: {{VALUE}};' ),
 			)
 		);
@@ -392,7 +392,7 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 				'min'        => 0.1,
 				'max'        => 10,
 				'step'       => 0.05,
-				'default'    => 3,
+				'default'    => 6,
 				'condition'  => array( 'enable_animation' => 'yes' ),
 			)
 		);

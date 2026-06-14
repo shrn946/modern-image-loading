@@ -58,7 +58,7 @@
     var replayButton = wrapper.querySelector(".esl-showup-replay");
     var duration = Number(config.duration) || 2;
     var stagger = Math.max(0, Number(config.stagger) || 0);
-    var imageDuration = Number(config.imageDuration) || 3;
+    var imageDuration = Number(config.imageDuration) || 6;
 
     var timeline = window.gsap.timeline({
       defaults: { ease: "expo.inOut" },
