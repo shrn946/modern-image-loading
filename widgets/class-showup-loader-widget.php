@@ -129,7 +129,7 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 			'animation_images',
 			array(
 				'label'       => esc_html__( 'Images', 'elementor-willem-loader' ),
-				'description' => esc_html__( 'The first image is the main cover. Remaining images are overlays.', 'elementor-willem-loader' ),
+				'description' => esc_html__( 'Images play in order. The last image remains visible when the effect finishes.', 'elementor-willem-loader' ),
 				'type'        => Controls_Manager::REPEATER,
 				'fields'      => $image_repeater->get_controls(),
 				'title_field' => '{{{ image_label || "Image" }}}',
@@ -438,7 +438,7 @@ class ESL_Showup_Loader_Widget extends Widget_Base {
 		$end_chars = array_slice( $loading_chars, $split_at );
 		$final_chars = $this->split_characters( $settings['final_title'] );
 		$images = ! empty( $settings['animation_images'] ) ? $settings['animation_images'] : array();
-		$main_image = array_shift( $images );
+		$main_image = array_pop( $images );
 		$wrapper_id = 'esl-showup-' . $this->get_id();
 		$animation_enabled = 'yes' === $settings['enable_animation'];
 		$allowed_positions = array( 'center', 'left', 'right', 'bottom' );
